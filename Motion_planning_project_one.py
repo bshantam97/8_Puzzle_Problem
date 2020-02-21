@@ -1,8 +1,7 @@
-import numpy as np 
+import numpy as np
 import sys
 
 " Defining the Node class"
-
 class Node():
     
     " Initialize method for the Node class"
@@ -85,18 +84,7 @@ class Node():
             new_node_state[empty_tile[0],empty_tile[1]] = down_tile
             new_node_state[empty_tile[0]+1,empty_tile[1]] = 0
             return new_node_state
-    def printBacktrack(self,array):
-
-        Nodes = open('nodePath.txt',"w")
-        writetxt = " "
-        for columns in range(array.shape[1]):
-            for row in range(array.shape[0]):
                 
-                writetxt = writetxt + str(array[row][columns])
-
-        writetxt = writetxt + "\n"
-        Nodes.write(writetxt)
-    
     def Backtrack(self):
         
         counter = 0
@@ -104,28 +92,36 @@ class Node():
         nodeState_Backtrack = [] # List to store the nodestates for backtracking
         action_Backtrack = [] # List ot store the actions performed to achieve a goal state
         
-       
+        Nodes = open('nodePath.txt',"w")
         # Backtrack to gain node information 
         while self.parentNode:
             
-            self = self.parentNode
+            " Initialize self with the parent nofr"
+            self = self.parentNode 
+            
+            "Determine the parent node state and append it our list"
             nodeState_Backtrack.append(self.nodeState)
+            
+            "Append the actions into our list"
             action_Backtrack.append(self.actions)
         
         # PRINTING THE PATH TO ACHIEVE THE GOAL 
         while nodeState_Backtrack:
-
-            while len(nodeState_Backtrack) == 0:
-
-            	self.printBacktrack(nodeState_Backtrack.pop())
-
+            writetxt = " "
             #print(f'step: {counter} \nNodeState: {nodeState_Backtrack.pop()} \nactions:{action_Backtrack.pop()}')
+            currentNode =  nodeState_Backtrack.pop()
+            for column in range(currentNode.shape[1]):
+                for row in range(currentNode.shape[0]):
+                    writetxt = writetxt + str(currentNode[row][column])       
+            writetxt = writetxt + "\n"
+            Nodes.write(writetxt)
+            print(currentNode)
             counter+=1
         
     def Breadth_First_Search(self,goal_State):
         
         frontier = [self] # Frontier is basically the nodes that have to be explored
-        explored = set() # Explored is a set that stores all the visited nodes
+        explored =set() # Explored is a set that stores all the visited nodes
         
         while(len(frontier) > 0):
             
@@ -137,11 +133,8 @@ class Node():
              
             if np.array_equal(current_node_state.nodeState,goal_State):
                 
-                
                 print("Printing Backtracking")
                 current_node_state.Backtrack() # Print out the the path that was employed to achieve the goal state
-
-                print(explored)
                 
                 return True
             
@@ -189,6 +182,7 @@ class Node():
                         down = Node(nodeState=new_node_state,parentNode=current_node_state,actions='down')
                             
                         frontier.append(down)  
+                        
         print("process ended")
 
 def main():
