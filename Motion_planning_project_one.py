@@ -5,11 +5,12 @@ import sys
 class Node():
     
     " Initialize method for the Node class"
-    def __init__(self, nodeState, parentNode, actions):
+    def __init__(self, nodeState, parentNode, actions, nodeindex):
         
         self.nodeState = nodeState # State of our current node
         self.parentNode = parentNode # State of the previous node(parent node)
         self.actions = actions # Move Up, Down, Left or right
+        self.nodeindex = nodeindex
         
         "Defining the children node objects, left, right, up or down "
         self.up = None
@@ -87,12 +88,11 @@ class Node():
         
     def Backtrack(self):
         
-        counter = 0
-        
         nodeState_Backtrack = [] # List to store the nodestates for backtracking
         action_Backtrack = [] # List ot store the actions performed to achieve a goal state
         
         nodePath = open('nodePath.txt',"w")
+        
         # Backtrack to gain node information 
         while self.parentNode:
             
@@ -116,25 +116,28 @@ class Node():
             writetxt = writetxt + "\n"
             nodePath.write(writetxt)
             print(currentNode)
-            counter+=1
         
     def Breadth_First_Search(self,goal_State):
-        
+        counter = 0
+        counter1 = 0
         frontier = [self] # Frontier is basically the nodes that have to be explored
         explored = [] # Explored is a set that stores all the visited nodes
         printExplored = []
-
-        " Open a file nodes.txt to save all the nodes information"
         nodes = open('nodes.txt',"w")
-
+        nodeInfo = open('nodeInfo.txt',"w")
         while(len(frontier) > 0):
             
             writeExplored = " "
-            #print ("process started")
+            counter1 = counter1 + 1
+            "Remove the first node in the queue"
+            current_node_state = frontier.pop(0) 
             
-            current_node_state = frontier.pop(0) # Remove the first node in the queue
-            # Reshaping the node to store as a string. Avoids the error of unhashable type (np.ndarray)
+            "Write into the nodeInfo txt file"
+            nodeInfo.write(str(counter1) + " " + str(0 if current_node_state.parentNode == None else current_node_state.parentNode.nodeindex)+"\n")
+            
+            "Reshaping the node to store as a string. Avoids the error of unhashable type (np.ndarray)"
             explored.append(str(current_node_state.nodeState)) 
+            
             printExplored.append(current_node_state.nodeState)
             
             "Printing out all the nodes"
@@ -144,6 +147,7 @@ class Node():
                     writeExplored = writeExplored + str(pop[row][column])
             writeExplored = writeExplored + "\n"
             nodes.write(writeExplored)
+            # nodeInfo.write(str(counter) + "\n")
             
             " Check if the current nodestate is equal to the goal state"
             if np.array_equal(current_node_state.nodeState,goal_State):
@@ -160,8 +164,8 @@ class Node():
                     
                     if str(new_node_state) not in explored:
                         # Create a new child node that was created due to the right action
-                        
-                        right = Node(nodeState=new_node_state,parentNode=current_node_state,actions="right")
+                        counter = counter + 1
+                        right = Node(nodeState=new_node_state,parentNode=current_node_state,actions="right",nodeindex=counter)
                         
                         frontier.append(right)
                     
@@ -171,32 +175,31 @@ class Node():
                            
                     if str(new_node_state) not in explored:
                         # Create a child node that was created due to the left action 
-                            
-                        left = Node(nodeState=new_node_state,parentNode=current_node_state,actions='left')
+                        counter = counter + 1   
+                        left = Node(nodeState=new_node_state,parentNode=current_node_state,actions='left',nodeindex=counter)
                             
                         frontier.append(left)
-                            
+
                 if len(current_node_state.ActionMoveUp()) > 0:
                     new_node_state = current_node_state.ActionMoveUp()
                         
                     if str(new_node_state) not in explored:
                         # Create a child node that was created due to the left action 
-                            
-                        up = Node(nodeState=new_node_state,parentNode=current_node_state,actions='up')
+                        counter = counter + 1    
+                        up = Node(nodeState=new_node_state,parentNode=current_node_state,actions='up',nodeindex=counter)
                             
                         frontier.append(up)
-                    
+                        
                 if len(current_node_state.ActionMoveDown()) > 0:
                     
                     new_node_state = current_node_state.ActionMoveDown()
                         
                     if str(new_node_state) not in explored:
                         # Create a child node that was created due to the left action 
+                        counter = counter + 1   
+                        down = Node(nodeState=new_node_state,parentNode=current_node_state,actions='down',nodeindex=counter)
                             
-                        down = Node(nodeState=new_node_state,parentNode=current_node_state,actions='down')
-                            
-                        frontier.append(down) 
-        
+                        frontier.append(down)
         print("process ended")
 
 def main():
@@ -217,7 +220,7 @@ def main():
 	initial_state[2][1] = int(inputMatrix[7])
 	initial_state[2][2] = int(inputMatrix[8])
 	print(initial_state)
-	root_node = Node(nodeState=initial_state,actions=None,parentNode=None)
+	root_node = Node(nodeState=initial_state,actions=None,parentNode=None,nodeindex=1)
 	root_node.Breadth_First_Search(goal_state)
 
 
