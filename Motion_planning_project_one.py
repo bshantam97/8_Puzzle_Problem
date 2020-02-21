@@ -85,6 +85,17 @@ class Node():
             new_node_state[empty_tile[0],empty_tile[1]] = down_tile
             new_node_state[empty_tile[0]+1,empty_tile[1]] = 0
             return new_node_state
+    def printBacktrack(self,array):
+
+        Nodes = open('nodePath.txt',"w")
+        writetxt = " "
+        for columns in range(array.shape[1]):
+            for row in range(array.shape[0]):
+                
+                writetxt = writetxt + str(array[row][columns])
+
+        writetxt = writetxt + "\n"
+        Nodes.write(writetxt)
     
     def Backtrack(self):
         
@@ -103,8 +114,12 @@ class Node():
         
         # PRINTING THE PATH TO ACHIEVE THE GOAL 
         while nodeState_Backtrack:
-            
-            print(f'step: {counter} \nNodeState: {nodeState_Backtrack.pop()} \nactions:{action_Backtrack.pop()}')
+
+            while len(nodeState_Backtrack) == 0:
+
+            	self.printBacktrack(nodeState_Backtrack.pop())
+
+            #print(f'step: {counter} \nNodeState: {nodeState_Backtrack.pop()} \nactions:{action_Backtrack.pop()}')
             counter+=1
         
     def Breadth_First_Search(self,goal_State):
@@ -122,8 +137,10 @@ class Node():
              
             if np.array_equal(current_node_state.nodeState,goal_State):
                 
+                
                 print("Printing Backtracking")
                 current_node_state.Backtrack() # Print out the the path that was employed to achieve the goal state
+
                 print(explored)
                 
                 return True
