@@ -1,6 +1,8 @@
 import numpy as np 
+import sys
 
 " Defining the Node class"
+
 class Node():
     
     " Initialize method for the Node class"
@@ -108,7 +110,7 @@ class Node():
     def Breadth_First_Search(self,goal_State):
         
         frontier = [self] # Frontier is basically the nodes that have to be explored
-        explored =set() # Explored is a set that stores all the visited nodes
+        explored = set() # Explored is a set that stores all the visited nodes
         
         while(len(frontier) > 0):
             
@@ -122,6 +124,7 @@ class Node():
                 
                 print("Printing Backtracking")
                 current_node_state.Backtrack() # Print out the the path that was employed to achieve the goal state
+                print(explored)
                 
                 return True
             
@@ -175,9 +178,19 @@ def main():
 
 	# Hardcore the Initial State for prototyping purpose
 	# Defining the goal state that the solver wants to achieve
+
+	inputMatrix = sys.argv[1]
 	goal_state = np.array([1,2,3,4,5,6,7,8,0]).reshape(3,3)
-	goal_state
-	initial_state = np.array([1,2,3,7,8,0,4,5,6]).reshape(3,3)
+	initial_state = np.array([[0,0,0],[0,0,0],[0,0,0]])
+	initial_state[0][0] = int(inputMatrix[0])
+	initial_state[0][1] = int(inputMatrix[1])
+	initial_state[0][2] = int(inputMatrix[2])
+	initial_state[1][0] = int(inputMatrix[3])
+	initial_state[1][1] = int(inputMatrix[4])
+	initial_state[1][2] = int(inputMatrix[5])
+	initial_state[2][0] = int(inputMatrix[6])
+	initial_state[2][1] = int(inputMatrix[7])
+	initial_state[2][2] = int(inputMatrix[8])
 	print(initial_state)
 	root_node = Node(nodeState=initial_state,actions=None,parentNode=None)
 	root_node.Breadth_First_Search(goal_state)
