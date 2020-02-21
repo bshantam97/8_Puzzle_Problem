@@ -84,7 +84,7 @@ class Node():
             new_node_state[empty_tile[0],empty_tile[1]] = down_tile
             new_node_state[empty_tile[0]+1,empty_tile[1]] = 0
             return new_node_state
-                
+        
     def Backtrack(self):
         
         counter = 0
@@ -92,7 +92,7 @@ class Node():
         nodeState_Backtrack = [] # List to store the nodestates for backtracking
         action_Backtrack = [] # List ot store the actions performed to achieve a goal state
         
-        Nodes = open('nodePath.txt',"w")
+        nodePath = open('nodePath.txt',"w")
         # Backtrack to gain node information 
         while self.parentNode:
             
@@ -105,7 +105,7 @@ class Node():
             "Append the actions into our list"
             action_Backtrack.append(self.actions)
         
-        # PRINTING THE PATH TO ACHIEVE THE GOAL 
+        "Printing the path to achieve the goal" 
         while nodeState_Backtrack:
             writetxt = " "
             #print(f'step: {counter} \nNodeState: {nodeState_Backtrack.pop()} \nactions:{action_Backtrack.pop()}')
@@ -114,28 +114,42 @@ class Node():
                 for row in range(currentNode.shape[0]):
                     writetxt = writetxt + str(currentNode[row][column])       
             writetxt = writetxt + "\n"
-            Nodes.write(writetxt)
+            nodePath.write(writetxt)
             print(currentNode)
             counter+=1
         
     def Breadth_First_Search(self,goal_State):
         
         frontier = [self] # Frontier is basically the nodes that have to be explored
-        explored =set() # Explored is a set that stores all the visited nodes
-        
+        explored = [] # Explored is a set that stores all the visited nodes
+        printExplored = []
+
+        " Open a file nodes.txt to save all the nodes information"
+        nodes = open('nodes.txt',"w")
+
         while(len(frontier) > 0):
             
+            writeExplored = " "
             #print ("process started")
             
             current_node_state = frontier.pop(0) # Remove the first node in the queue
             # Reshaping the node to store as a string. Avoids the error of unhashable type (np.ndarray)
-            explored.add(str(current_node_state.nodeState)) 
-             
+            explored.append(str(current_node_state.nodeState)) 
+            printExplored.append(current_node_state.nodeState)
+            
+            "Printing out all the nodes"
+            pop = printExplored.pop()
+            for column in range(pop.shape[1]):
+                for row in range(pop.shape[0]):
+                    writeExplored = writeExplored + str(pop[row][column])
+            writeExplored = writeExplored + "\n"
+            nodes.write(writeExplored)
+            
+            " Check if the current nodestate is equal to the goal state"
             if np.array_equal(current_node_state.nodeState,goal_State):
                 
                 print("Printing Backtracking")
                 current_node_state.Backtrack() # Print out the the path that was employed to achieve the goal state
-                
                 return True
             
             else:
@@ -181,8 +195,8 @@ class Node():
                             
                         down = Node(nodeState=new_node_state,parentNode=current_node_state,actions='down')
                             
-                        frontier.append(down)  
-                        
+                        frontier.append(down) 
+        
         print("process ended")
 
 def main():
